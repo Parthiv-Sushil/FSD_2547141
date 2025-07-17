@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css?authuser=2" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>2547141</title>
+</head>
+<body class="bg-grey">
+   <header>
+    <h1 class="flex justify-center text-sm font-bold">END OF SEASON!!!</h1>
+    <nav >
+        <div class="bg-black flex justify-between p-5">
+            <div>
+                <a href="./" class="text-white text-xl">E-SHOP</a>
+            </div>
+         <div class=" gap-9 text-white hidden md:flex " >
+            <a href="#herosection" class="hover:text-blue-500" >Home</a>
+            <a href="./" class="hover:text-blue-500">Shopping Cart</a>
+            <a href="./" class="hover:text-blue-500">About US</a>
+         </div>
+         
+
+         <div>
+            <input class=" p-1 border border-black border-solid" type="search" name="search" id="search" placeholder="search"/>
+              <button onclick="toggleMenu()" class=" text-white text-2xl fa-solid fa-magnifying-glass"></button>
+
+            <div id="mobile-toggle" class="hidden  gap-3 text-white flex flex-col pb-10 " >
+            <a href="#herosection" class="hover:text-blue-500" >Home</a>
+            <a href="./" class="hover:text-blue-500">Shopping Cart</a>
+            <a href="./" class="hover:text-blue-500">About US</a>
+         </div>
+              
+         </div>
+       
+        </div>
+  
+    </nav>
+    </header>
+
+     <section id="herosection" class="bg-[url(./img01.jpg)] bg-center bg-no-repeat bg-cover w-full h-[50vh] border-2 border-solid border-white flex flex-col justify-between">
+
+        <div class=" font-bold p-10 self-center h-[50vh] ">
+
+            <div class="bg-black bg-opacity-50 flex flex-col items-center rounded-lg p-4 gap-5 w-[90vh] m-5">
+                
+                <h1 class="text-yellow-100 text-[40px] rounded-lg ">END OF SEASON SALE!</h1>
+                <p class="text-white">Upto 70% Discounts.</p>
+
+                    <button class="bg-white rounded-sm p-5 m-5">Explore More</button>
+
+            </div>
+        </div>
+
+    </section>
+
+    </section>
+
+    <section id="multimediasection" class="bg-black flex justify-center  items-center flex-col gap-5 p-10">
+
+        <video controls muted >
+            <source src="./Set1 Video.mp4" type="video/mp4"/>
+            <track src="./subtitiles.vtt" type="subtitles" srclang="eng"/>
+          </video>
+
+
+        <audio controls autoplay muted preload="metadata">
+
+            <source src="./audio_1.mp3" type="audio/mpeg"/>
+              Your browser does not support the audio element.
+        </audio>
+    
+    </section>
+    
+    <section class="flex justify-center items-center p-10 bg-gray">
+  <form id="interestForm" class="flex flex-col gap-4 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h2 class="text-xl font-bold mb-2">Product Interest Form</h2>
+    <label>
+      User Name:
+      <input type="text" id="username" name="username" class="border p-2 rounded w-full" required>
+    </label>
+    <label>
+      Email:
+      <input type="email" id="email" name="email" class="border p-2 rounded w-full" required>
+    </label>
+    <label>
+      Product Interested In:
+      <input type="text" id="product" name="product" class="border p-2 rounded w-full" required>
+    </label>
+    <button type="submit" class="bg-black text-white p-3 rounded hover:bg-blue-500 transition">Submit</button>
+    <p id="formError" class="text-red-500 hidden">Please fill all fields.</p>
+  </form>
+</section>
+
+<script>
+  document.getElementById('interestForm').addEventListener('submit', function(e) {
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const product = document.getElementById('product').value.trim();
+    const error = document.getElementById('formError');
+    if (!username || !email || !product) {
+      e.preventDefault();
+      error.classList.remove('hidden');
+    } else {
+      error.classList.add('hidden');
+
+       localStorage.setItem('eshopName', username);
+    localStorage.setItem('eshopProduct', product);
+  
+    }
+  });
+</script>
+
+<style>
+  button:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    transform: scale(1.05);
+  }
+</style>
+
+<section class="p-10 bg-gray-100">
+  <div class="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+    <input id="productSearch" type="text" placeholder="Search products" class="border p-2 rounded w-full md:w-1/3">
+    <button id="searchBtn" class="bg-black text-white px-4 py-2 rounded hover:bg-blue-500 transition">Search</button>
+    <select id="sortDropdown" class="border p-2 rounded w-full md:w-1/4">
+      <option value="">Sort by Price</option>
+      <option value="asc">Low to High</option>
+      <option value="desc">High to Low</option>
+    </select>
+  </div>
+ 
+  <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+</section>
+
+<script>
+  let products = [];
+  let filteredProducts = [];
+
+  async function fetchProducts() {
+    const res = await fetch('https://fakestoreapi.com/products?limit=8');
+    products = await res.json();
+    filteredProducts = [...products];
+    renderProducts(filteredProducts);
+  }
+
+  function renderProducts(items) {
+    const container = document.getElementById('productsContainer');
+    container.innerHTML = '';
+    items.forEach(product => {
+      container.innerHTML += `
+        <div class="flex flex-col items-center bg-white p-4 rounded shadow">
+          <img src="${product.image}" alt="${product.title}" class="h-32 object-contain mb-2">
+          <h3 class="font-bold text-center text-sm mb-1">${product.title}</h3>
+          <p class="text-green-700 font-semibold mb-1">$${product.price}</p>
+        </div>
+      `;
+    });
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    const query = document.getElementById('productSearch').value.trim().toLowerCase();
+    filteredProducts = products.filter(p => p.title.toLowerCase().includes(query));
+    renderProducts(filteredProducts);
+  });
+
+  document.getElementById('sortDropdown').addEventListener('change', (e) => {
+    const val = e.target.value;
+    if (val === 'asc') {
+      filteredProducts.sort((a, b) => a.price - b.price);
+    } else if (val === 'desc') {
+      filteredProducts.sort((a, b) => b.price - a.price);
+    }
+    renderProducts(filteredProducts);
+  });
+
+  fetchProducts();
+</script>
+
+<section id="welcome" class="bg-black p-10">
+<div id="greetingMsg" class="text-lg font-bold text-white p-4 flex justify-center bg-black"></div>
+</section>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  const name = localStorage.getItem('eshopName');
+  const product = localStorage.getItem('eshopProduct');
+  if (name && product) {
+    document.getElementById('greetingMsg').textContent =
+      `Welcome back, ${name}! You were interested in ${product}.`;
+  }
+});
+</script>
+
+<section id="geoSection" class="flex flex-col items-center p-6 bg-white border-2 border-solid border-white">
+  <h2 class="text-xl font-bold mb-2 text-black font-bold">Your Location</h2>
+  <div id="locationMsg" class="text-lg text-black font-semibold p-2"></div>
+</section>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  const locationMsg = document.getElementById('locationMsg');
+  if ("geolocation" in navigator) {
+    locationMsg.textContent = "Requesting location permission...";
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        locationMsg.textContent =
+          `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`;
+      },
+      function(error) {
+        locationMsg.textContent =
+          "Location permission denied or unavailable.";
+      }
+    );
+  } else {
+    locationMsg.textContent =
+      "Geolocation is not supported by your browser.";
+  }
+});
+</script>
+</script>
+
+<footer class="bg-black w-full py-6 mt-5">
+  <div class="text-center text-white text-lg text-sm font-bold h-[15vh] flex justify-center items-center">
+    &copy; 2025 E-SHOP. All rights reserved.
+  </div>
+</footer>
+
+
+
+</body>
+</html>
+
+
+
+   
